@@ -27,6 +27,8 @@ public class ActivityTodoEdit extends AppCompatActivity {
     boolean mBDone = false;
     Todo mTodo = null;
     TodoType mTodoType = null;
+    String mSFlag = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,13 +44,17 @@ public class ActivityTodoEdit extends AppCompatActivity {
         final ImageButton tColorPicker = (ImageButton)findViewById(R.id.bt_edit);
         final Bundle tExtras = getIntent().getExtras();
         if (tExtras != null) {
-            mTodo = (Todo)tExtras.getSerializable("TODO");
-            mTodoType = tTodoTypeManager.todoTypeFor(mTodo.idTodoType());
-            mIColor = Color.parseColor(mTodoType.color());
-            tDiscription.setText(mTodo.description());
-            tImportance.setText(mTodoType.name());
-            tCheckBox.setChecked(mTodo.isDone());
-            tColorPicker.setBackgroundColor(Color.parseColor(mTodoType.color()));
+            mSFlag = tExtras.getString("FLAG");
+            if(mSFlag!= null && mSFlag.equals("EDIT_FLAG")) {
+
+                mTodo = (Todo) tExtras.getSerializable("TODO");
+                mTodoType = tTodoTypeManager.todoTypeFor(mTodo.idTodoType());
+                mIColor = Color.parseColor(mTodoType.color());
+                tDiscription.setText(mTodo.description());
+                tImportance.setText(mTodoType.name());
+                tCheckBox.setChecked(mTodo.isDone());
+                tColorPicker.setBackgroundColor(Color.parseColor(mTodoType.color()));
+            }
         }
         tColorPicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,23 +93,25 @@ public class ActivityTodoEdit extends AppCompatActivity {
         tSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(tDiscription.getText().toString().trim().length()>0 && tImportance.getText().toString().trim().length()>0){
-                    // first we remove old todo and old todotype
-                    tTodoTypeManager.remove(mTodoType);
-                    tTodoManager.remove(mTodo);
+                if(tDiscription.getText().toString().trim().length()>0 && tImportance.getText().toString().trim().length()>0) {
 
+                    if(mSFlag!= null && mSFlag.equals("EDIT_FLAG")) {
+                        // first we remove old todo and old todotype
+                        tTodoTypeManager.remove(mTodoType);
+                        tTodoManager.remove(mTodo);
+                    }
                     //  than we creates new and save
-                    TodoType mtodoType = new TodoType(tImportance.getText().toString(),String.format("#%06X", 0xFFFFFF & mIColor), UUID.randomUUID());
-                    Todo mtodo = new Todo(tDiscription.getText().toString(),new Date(),mtodoType.id(),mBDone,UUID.randomUUID());
-                    //TodoTypeManager tTodoTypeManager = new TodoTypeManager();
-                    //TodoManager tTodoManager = new TodoManager();
+                    TodoType mtodoType = new TodoType(tImportance.getText().toString(), String.format("#%06X", 0xFFFFFF & mIColor), UUID.randomUUID());
+                    Todo mtodo = new Todo(tDiscription.getText().toString(), new Date(), mtodoType.id(), mBDone, UUID.randomUUID());
                     tTodoTypeManager.save(mtodoType);
                     tTodoManager.save(mtodo);
-                    Intent intent = new Intent(getApplication(),ActivityTodoList.class);
+                    Intent intent = new Intent(getApplication(), ActivityTodoList.class);
                     startActivity(intent);
-                }else {
-                    Toast.makeText(getApplication(), "Input Error", Toast.LENGTH_SHORT).show();
-                }
+
+                    }else{
+                        Toast.makeText(getApplication(), "Input Error", Toast.LENGTH_SHORT).show();
+                    }
+
             }
         });
 

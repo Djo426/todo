@@ -16,7 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.todo_list.ActivityTodoAdd" />
         <activity android:name=".activities.todo_list.ActivityTodoEdit"></activity>
     </application>
 

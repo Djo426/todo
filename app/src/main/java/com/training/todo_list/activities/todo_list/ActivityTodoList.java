@@ -11,17 +11,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.training.todo_list.R;
 import com.training.todo_list.model.managers.TodoManager;
 import com.training.todo_list.model.managers.TodoTypeManager;
 import com.training.todo_list.model.models.Todo;
-import com.training.todo_list.model.models.TodoType;
 
 public class ActivityTodoList extends ListActivity {
 
     ListView todoList;
+    static final String sSADD_FLAG = "ADD_FLAG";
+    static final String sSEDIT_FLAG = "EDIT_FLAG";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,22 +50,20 @@ public class ActivityTodoList extends ListActivity {
                 Todo todo = tTodoManager.all().get(i);
                 Intent intent = new Intent(getApplication(),ActivityTodoEdit.class);
                 intent.putExtra("TODO",todo);
+                // we create a FLAG telling the target Activity that this is an edited todo
+                intent.putExtra("FLAG",sSEDIT_FLAG);
                 startActivity(intent);
-
-
-
             }
         });
 
     }
 
-
     public void askAddTodo(View pView) {
-        //Toast.makeText(this, "Ask add todo", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this,ActivityTodoAdd.class);
+        Intent intent = new Intent(this,ActivityTodoEdit.class);
+        // we create a FLAG telling the target Activity that this is a new todo
+        intent.putExtra("FLAG",sSADD_FLAG);
         startActivity(intent);
     }
-
 
     public void askSurprise(View pView) {
         AlertDialog.Builder tBuilder = new AlertDialog.Builder(this);
